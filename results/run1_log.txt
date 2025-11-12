@@ -1,0 +1,58 @@
+[INFO] Reading CSV from: data/raw/cicids2017.csv
+[INFO] Columns in CSV:
+[' Destination Port', ' Flow Duration', ' Total Fwd Packets', ' Total Backward Packets', 'Total Length of Fwd Packets', ' Total Length of Bwd Packets', ' Fwd Packet Length Max', ' Fwd Packet Length Min', ' Fwd Packet Length Mean', ' Fwd Packet Length Std', 'Bwd Packet Length Max', ' Bwd Packet Length Min', ' Bwd Packet Length Mean', ' Bwd Packet Length Std', 'Flow Bytes/s', ' Flow Packets/s', ' Flow IAT Mean', ' Flow IAT Std', ' Flow IAT Max', ' Flow IAT Min', 'Fwd IAT Total', ' Fwd IAT Mean', ' Fwd IAT Std', ' Fwd IAT Max', ' Fwd IAT Min', 'Bwd IAT Total', ' Bwd IAT Mean', ' Bwd IAT Std', ' Bwd IAT Max', ' Bwd IAT Min', 'Fwd PSH Flags', ' Bwd PSH Flags', ' Fwd URG Flags', ' Bwd URG Flags', ' Fwd Header Length', ' Bwd Header Length', 'Fwd Packets/s', ' Bwd Packets/s', ' Min Packet Length', ' Max Packet Length', ' Packet Length Mean', ' Packet Length Std', ' Packet Length Variance', 'FIN Flag Count', ' SYN Flag Count', ' RST Flag Count', ' PSH Flag Count', ' ACK Flag Count', ' URG Flag Count', ' CWE Flag Count', ' ECE Flag Count', ' Down/Up Ratio', ' Average Packet Size', ' Avg Fwd Segment Size', ' Avg Bwd Segment Size', ' Fwd Header Length.1', 'Fwd Avg Bytes/Bulk', ' Fwd Avg Packets/Bulk', ' Fwd Avg Bulk Rate', ' Bwd Avg Bytes/Bulk', ' Bwd Avg Packets/Bulk', 'Bwd Avg Bulk Rate', 'Subflow Fwd Packets', ' Subflow Fwd Bytes', ' Subflow Bwd Packets', ' Subflow Bwd Bytes', 'Init_Win_bytes_forward', ' Init_Win_bytes_backward', ' act_data_pkt_fwd', ' min_seg_size_forward', 'Active Mean', ' Active Std', ' Active Max', ' Active Min', 'Idle Mean', ' Idle Std', ' Idle Max', ' Idle Min', ' Label']
+[INFO] Using label column: ' Label'
+[INFO] NaN or inf values in features before cleaning: 5734
+[INFO] Filling NaN values with 0.0
+[INFO] Total rows before sampling: 2830743
+[INFO] Positive (attack) ratio: 0.1970
+[INFO] After sampling: 50000 rows
+[INFO] Train size: 30000
+[INFO] Val size:   10000
+[INFO] Test size:  10000
+
+======================
+TRAINING MODEL: Logistic Regression
+======================
+[INFO] Fitting model...
+[INFO] Evaluating on test set...
+
+Classification report (Attack = 1):
+              precision    recall  f1-score   support
+
+           0     0.9645    0.8245    0.8890      8030
+           1     0.5506    0.8761    0.6762      1970
+
+    accuracy                         0.8347     10000
+   macro avg     0.7575    0.8503    0.7826     10000
+weighted avg     0.8829    0.8347    0.8471     10000
+
+Confusion matrix:
+[[6621 1409]
+ [ 244 1726]]
+
+[INFO] Inference time on test set: 0.0068 seconds
+[INFO] Approx. throughput: 1,466,693.7 flows/second
+
+======================
+TRAINING MODEL: Random Forest
+======================
+[INFO] Fitting model...
+[INFO] Evaluating on test set...
+
+Classification report (Attack = 1):
+              precision    recall  f1-score   support
+
+           0     0.9983    0.9983    0.9983      8030
+           1     0.9929    0.9929    0.9929      1970
+
+    accuracy                         0.9972     10000
+   macro avg     0.9956    0.9956    0.9956     10000
+weighted avg     0.9972    0.9972    0.9972     10000
+
+Confusion matrix:
+[[8016   14]
+ [  14 1956]]
+
+[INFO] Inference time on test set: 0.0784 seconds
+[INFO] Approx. throughput: 127,628.8 flows/second
