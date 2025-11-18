@@ -1,3 +1,6 @@
+CICIDS2017 dataset link = http://cicresearch.ca/CICDataset/CIC-IDS-2017/
+I couldn't push the dataset because is too big.
+
 \# Lightweight Feature-Based Network Intrusion Detection
 
 
