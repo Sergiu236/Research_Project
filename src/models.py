@@ -4,25 +4,26 @@ from sklearn.ensemble import RandomForestClassifier
 
 def build_logistic_regression():
     """
-    Very simple Logistic Regression for binary classification.
+    Logistic Regression for both binary and multi-class tasks.
     """
-    model = LogisticRegression(
-        max_iter=1000,
+    return LogisticRegression(
+        max_iter=2000,
         class_weight="balanced",
+        multi_class="multinomial",
+        solver="lbfgs",   # works well with multinomial
         n_jobs=-1,
+        random_state=42,
     )
-    return model
 
 
 def build_random_forest():
     """
-    Simple Random Forest for binary classification.
+    Random Forest for binary and multi-class.
     """
-    model = RandomForestClassifier(
+    return RandomForestClassifier(
         n_estimators=100,
         max_depth=20,
         class_weight="balanced",
         n_jobs=-1,
         random_state=42,
     )
-    return model

@@ -1,65 +1,85 @@
 import time
+from typing import List
 
 import pandas as pd
 from sklearn.metrics import classification_report, confusion_matrix
 
-from .data_loading import load_cicids_binary
+from .data_loading import load_cicids_multiclass
 from .models import build_logistic_regression, build_random_forest
 
 
-def train_and_evaluate(model, X_train, y_train, X_val, y_val, X_test, y_test, name: str):
-    print(f"\n======================")
+def train_and_evaluate(
+    model,
+    X_train,
+    y_train,
+    X_val,
+    y_val,
+    X_test,
+    y_test,
+    class_names: List[str],
+    name: str,
+):
+    print("\n======================")
     print(f"TRAINING MODEL: {name}")
-    print(f"======================")
+    print("======================")
 
-    # Combine train + val for final training
+    # Train on train + val
     X_train_full = pd.concat([X_train, X_val], axis=0)
     y_train_full = pd.concat([y_train, y_val], axis=0)
 
     print("[INFO] Fitting model...")
     model.fit(X_train_full, y_train_full)
 
-    print("[INFO] Evaluating on test set...")
+    print("[INFO] Evaluating on test set...\n")
+
+    # Measure full test inference time
     start = time.time()
     y_pred = model.predict(X_test)
     elapsed = time.time() - start
 
-    print("\nClassification report (Attack = 1):")
-    print(classification_report(y_test, y_pred, digits=4))
+    print("Classification report (multi-class):")
+    print(
+        classification_report(
+            y_test,
+            y_pred,
+            target_names=class_names,
+            digits=4,
+        )
+    )
 
+    cm = confusion_matrix(y_test, y_pred)
     print("Confusion matrix:")
-    print(confusion_matrix(y_test, y_pred))
+    print(cm)
 
-    if elapsed > 0:
-        flows_per_sec = len(X_test) / elapsed
-    else:
-        flows_per_sec = float("inf")
+    n_samples = len(X_test)
+    throughput = n_samples / elapsed if elapsed > 0 else float("inf")
 
-    print(f"\n[INFO] Inference time on test set: {elapsed:.4f} seconds")
-    print(f"[INFO] Approx. throughput: {flows_per_sec:,.1f} flows/second")
+    print(f"\n[INFO] Inference time: {elapsed:.4f} seconds")
+    print(f"[INFO] Throughput: {throughput:,.1f} flows/second")
 
 
 def main():
-    # 1. Load data
-    (X_train, y_train), (X_val, y_val), (X_test, y_test) = load_cicids_binary(
-        csv_path="data/raw/cicids2017.csv",
-        sample_size=50000,
-        random_state=42,
-    )
+    # Load multi-class dataset
+    (X_train, y_train), (X_val, y_val), (X_test, y_test), class_names = load_cicids_multiclass()
 
-    # 2. Build models
-    log_reg = build_logistic_regression()
+    # Make sure labels are Series
+    if not isinstance(y_train, pd.Series):
+        y_train = pd.Series(y_train)
+        y_val = pd.Series(y_val)
+        y_test = pd.Series(y_test)
+
+    lr = build_logistic_regression()
     rf = build_random_forest()
 
-    # 3. Train + evaluate
     train_and_evaluate(
-        log_reg,
+        lr,
         X_train,
         y_train,
         X_val,
         y_val,
         X_test,
         y_test,
+        class_names=class_names,
         name="Logistic Regression",
     )
 
@@ -71,6 +91,7 @@ def main():
         y_val,
         X_test,
         y_test,
+        class_names=class_names,
         name="Random Forest",
     )
 
